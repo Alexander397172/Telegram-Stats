@@ -29,6 +29,9 @@ for msg in data.get("messages", []):
     if uid.startswith("user"):
         uid = uid[4:]
 
+    if uid.startswith("channel"):
+        continue
+
     date = msg["date"].split("T")[0]
     daily_counts[date][uid] += 1
 
