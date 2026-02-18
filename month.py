@@ -23,29 +23,16 @@ def load_stats(filename: str = 'message_stats.txt') -> pd.DataFrame:
     records = []
 
     with open(filename, 'r', encoding='utf-8') as f:
-        current_date = None
         for line in f:
-            line = line.strip()
-            if not line:
-                continue
-            if line.startswith('Дата:'):
-                date_str = line.split(': ')[1]
-                try:
-                    current_date = datetime.strptime(date_str, '%Y-%m-%d').date()
-                except ValueError:
-                    current_date = None
-            elif current_date and ':' in line:
-                try:
-                    user_id_str, count_str = line.split(':', 1)
-                    user_id = int(user_id_str.strip())
-                    count = int(count_str.strip())
-                    username = user_names.get(user_id, f'User_{user_id}')
-                    records.append((current_date, username, count))
-                except ValueError:
-                    continue
+            parts = line.strip().rstrip(';').split(';')
+            date = datetime.strptime(parts[0], '%Y-%m-%d').date()
 
-    df = pd.DataFrame(records, columns=['date', 'user', 'count'])
-    return df
+            for item in parts[1:]:
+                user_id, count = map(int, item.split(':'))
+                username = user_names.get(user_id, f'User_{user_id}')
+                records.append((date, username, count))
+
+    return pd.DataFrame(records, columns=['date', 'user', 'count'])
 
 def filter_by_month(df: pd.DataFrame, year: int, month: int) -> pd.DataFrame:
     df['year'] = df['date'].dt.year
