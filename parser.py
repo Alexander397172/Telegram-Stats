@@ -44,9 +44,9 @@ with open("names.txt", "w", encoding="utf-8") as f:
 
 with open("message_stats.txt", "w", encoding="utf-8") as f:
     for date in sorted(daily_counts):
-        f.write(f"{date};")
+        f.write(date)
         for uid, count in daily_counts[date].items():
-            f.write(f"{uid}:{count};")
+            f.write(f";{uid}:{count}")
         f.write("\n")
 
 print("Готово")
